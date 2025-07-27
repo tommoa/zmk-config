@@ -21,7 +21,7 @@
 
         board = "preonic_rev3";
 
-        zephyrDepsHash = "sha256-OGmPnAsa+5CrPonGIGNfmQZDUm/lpAuOfW/2rMmgAW8=";
+        zephyrDepsHash = "sha256-iWWZVmLZUTKoqzkI0K3l2f37kslEX0Mnah2AB+idZWg=";
 
         installPhase = ''
           runHook preInstall
