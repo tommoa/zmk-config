@@ -27,7 +27,30 @@
           runHook preInstall
 
           mkdir $out
-          cp zephyr/zmk.elf $out/
+          
+          # List what we actually have
+          echo "Available files in zephyr directory:"
+          ls -la zephyr/ || true
+          
+          # Copy .bin file if it exists
+          if [ -f zephyr/zmk.bin ]; then
+            echo "Copying zmk.bin"
+            cp zephyr/zmk.bin $out/
+          fi
+          
+          # Copy .hex file if it exists
+          if [ -f zephyr/zmk.hex ]; then
+            echo "Copying zmk.hex"
+            cp zephyr/zmk.hex $out/
+          fi
+          
+          # Copy .uf2 files if they exist
+          for uf2_file in zephyr/*.uf2; do
+            if [ -f "$uf2_file" ]; then
+              echo "Copying $uf2_file"
+              cp "$uf2_file" $out/
+            fi
+          done
 
           runHook postInstall
         '';
@@ -57,19 +80,8 @@
           echo "4. Release BOOT"
           echo "5. Your Preonic should now be in DFU mode"
           echo
-          echo "Press Enter when your Preonic is in DFU mode..."
           
-          echo "Checking for DFU device..."
-          while ! dfu-util -l | grep -q "Found DFU"; do
-            # echo "Error: No DFU device found!"
-            # echo "Make sure your Preonic is in DFU mode and try again."
-            # exit 1
-            sleep 1
-            echo -n .
-          done
-          
-          echo "Found DFU device. Flashing firmware..."
-          dfu-util -a 0 -s 0x08000000:leave -D ${firmware}/zmk.elf
+          dfu-util -a 0 -s 0x08000000:leave -D ${firmware}/zmk.bin -w
           
           echo "Flashing complete! Your Preonic should restart automatically."
         '';
