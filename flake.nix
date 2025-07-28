@@ -21,7 +21,7 @@
 
         board = "preonic_rev3";
 
-        zephyrDepsHash = "sha256-iWWZVmLZUTKoqzkI0K3l2f37kslEX0Mnah2AB+idZWg=";
+        zephyrDepsHash = "sha256-VVS+o08ii5ZgKfDoO9wIQXS/464FwrVqqM6a+ZzjOUc=";
 
         installPhase = ''
           runHook preInstall
@@ -35,7 +35,7 @@
           # Copy .bin file if it exists
           if [ -f zephyr/zmk.bin ]; then
             echo "Copying zmk.bin"
-            cp zephyr/zmk.bin $out/
+            cp --no-preserve=all zephyr/zmk.bin $out/
           fi
           
           # Copy .hex file if it exists
@@ -52,8 +52,13 @@
             fi
           done
 
+          cp zephyr/zephyr.dts $out/
+          grep -v -e "^#" -e "^$" "zephyr/.config" | sort | tee $out/Kconfig
+
           runHook postInstall
         '';
+
+        fixupPhase = '''';
 
         meta = {
           description = "ZMK firmware";
